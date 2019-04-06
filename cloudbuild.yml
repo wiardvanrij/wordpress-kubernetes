@@ -5,11 +5,11 @@ steps:
   args:
   - 'build'
   - '-t'
-  - 'gcr.io/$PROJECT_ID/hello-cloudbuild:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/sysrant:$SHORT_SHA'
   - '.'
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push
   args:
   - 'push'
-  - 'gcr.io/$PROJECT_ID/hello-cloudbuild:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/sysrant:$SHORT_SHA'
