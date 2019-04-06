@@ -1,0 +1,61 @@
+# [START cloudbuild]
+steps:
+
+# This step builds the container image.
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build
+  args:
+  - 'build'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/sysrant:$SHORT_SHA'
+  - '.'
+
+# This step pushes the image to Container Registry
+# The PROJECT_ID and SHORT_SHA variables are automatically
+# replaced by Cloud Build.
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push
+  args:
+  - 'push'
+  - 'gcr.io/$PROJECT_ID/sysrant:$SHORT_SHA'
+# [END cloudbuild]
+
+# [START cloudbuild-trigger-cd]
+# This step clones the sysrant-env repository
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Clone env repository
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+    gcloud source repos clone sysrant-env && \
+    cd sysrant-env && \
+    git checkout candidate && \
+    git config user.email $(gcloud auth list --filter=status:ACTIVE --format='value(account)')
+
+# This step generates the new manifest
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Generate manifest
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+     sed "s/GOOGLE_CLOUD_PROJECT/${PROJECT_ID}/g" kubernetes.yaml.tpl | \
+     sed "s/COMMIT_SHA/${SHORT_SHA}/g" > sysrant-env/kubernetes.yaml
+
+# This step pushes the manifest back to sysrant-env
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Push manifest
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+    set -x && \
+    cd sysrant-env && \
+    git add kubernetes.yaml && \
+    git commit -m "Deploying image gcr.io/${PROJECT_ID}/sysrant:${SHORT_SHA}
+    Built from commit ${COMMIT_SHA} of repository sysrant-app
+    Author: $(git log --format='%an <%ae>' -n 1 HEAD)" && \
+    git push origin candidate
+
+# [END cloudbuild-trigger-cd]
