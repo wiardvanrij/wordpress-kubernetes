@@ -25,7 +25,7 @@ spec:
     requests:
       storage: 5Gi
 ---
-apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wordpress
@@ -49,20 +49,29 @@ spec:
         - image: gcr.io/GOOGLE_CLOUD_PROJECT/sysrant:COMMIT_SHA
           name: wordpress
           env:
-            - name: WORDPRESS_DB_HOST
+            - name: DB_NAME
+              value: wordpress
+            - name: DB_USER
+              value: root
+            - name: DB_HOST
               value: wordpress-mysql
-            - name: WORDPRESS_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: password
+            - name: DB_CHARSET
+              value: utf8
+            - name: DB_COLLATE
+              value: ''  
           ports:
             - containerPort: 80
               name: wordpress
           volumeMounts:
             - name: wordpress-persistent-storage
               mountPath: /var/www/html
+            - name: secrets
+              readOnly: true
+              mountPath: /etc/secrets  
       volumes:
         - name: wordpress-persistent-storage
           persistentVolumeClaim:
             claimName: wp-pv-claim
+        - name: secrets
+          secret:
+            secretName: wordpress-secrets
