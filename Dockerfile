@@ -30,4 +30,7 @@ COPY --from=downloader /tmp/wordpress/ /var/www/html/
 COPY wp-config.php /var/www/html/
 RUN chown www-data:www-data . -R
 
+COPY docker-entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["apache2-foreground"]

@@ -59,19 +59,58 @@ spec:
               value: utf8
             - name: DB_COLLATE
               value: ''  
+            - name: AUTH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: AUTH_KEY
+            - name: SECURE_AUTH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: SECURE_AUTH_KEY
+            - name: LOGGED_IN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: LOGGED_IN_KEY
+            - name: NONCE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: NONCE_KEY
+            - name: AUTH_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: AUTH_SALT
+            - name: SECURE_AUTH_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: SECURE_AUTH_SALT
+            - name: LOGGED_IN_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: LOGGED_IN_SALT
+            - name: NONCE_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: NONCE_SALT
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secrets
+                  key: DB_PASSWORD       
           ports:
             - containerPort: 80
               name: wordpress
           volumeMounts:
             - name: wordpress-persistent-storage
-              mountPath: /var/www/html/wp-content/uploads
-            - name: secrets
-              readOnly: true
-              mountPath: /etc/secrets  
+              mountPath: /var/www/html/wp-content/uploads  
       volumes:
         - name: wordpress-persistent-storage
           persistentVolumeClaim:
             claimName: wp-pv-claim
-        - name: secrets
-          secret:
-            secretName: wordpress-secrets
