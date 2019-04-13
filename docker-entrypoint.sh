@@ -20,6 +20,10 @@ array=(
     'WP_AUTO_UPDATE_CORE::false'    
 )
 
+sed_escape() {
+    echo "$@" | sed -e 's/[\/&]/\\&/g'
+}
+
 for index in "${array[@]}" ; do
     KEY="${index%%::*}"
     VALUE="${index##*::}"
@@ -29,7 +33,7 @@ for index in "${array[@]}" ; do
         declare ${KEY}=$VALUE
     fi
 
-    sed -i -e 's/{'"$KEY"'}/'"${!KEY}"'/g' wp-config.php  
+    sed -i -e 's/{'"$KEY"'}/'"$(sed_escape ${!KEY})"'/g' wp-config.php
 
 done
 
