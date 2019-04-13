@@ -22,7 +22,10 @@ RUN find ./wp-content/themes/ -maxdepth 1 -mindepth 1 -type d -exec rm -r {} \;;
 
 # Starting the actual container
 FROM php:7.3-apache
+VOLUME /var/www/wordpress/wp-content
+VOLUME /etc/secrets
 WORKDIR /var/www/html/
+
 COPY --from=downloader /tmp/wordpress/ /var/www/html/
 COPY wp-config.php /var/www/html/
 RUN chown www-data:www-data . -R

@@ -64,7 +64,7 @@ spec:
               name: wordpress
           volumeMounts:
             - name: wordpress-persistent-storage
-              mountPath: /var/www/html
+              mountPath: /var/www/html/wp-content/uploads
             - name: secrets
               readOnly: true
               mountPath: /etc/secrets  
