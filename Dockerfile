@@ -59,6 +59,10 @@ WORKDIR /var/www/html/
 
 COPY --from=downloader /tmp/wordpress/ /var/www/html/
 COPY wp-config.php /var/www/html/
+
+COPY app/plugins wp-content/
+COPY app/themes  wp-content/
+
 RUN chown www-data:www-data . -R
 
 COPY docker-entrypoint.sh /usr/local/bin/
