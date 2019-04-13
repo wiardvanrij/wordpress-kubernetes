@@ -12,18 +12,17 @@ spec:
     app: wordpress
     tier: frontend
 ---
-apiVersion: v1
 kind: PersistentVolumeClaim
+apiVersion: v1
 metadata:
-  name: wp-pv-claim
-  labels:
-    app: wordpress
+  name: wp-sysrant-claim
 spec:
+  storageClassName: "nfs"
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 5Gi
+      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -115,4 +114,4 @@ spec:
       volumes:
         - name: wordpress-persistent-storage
           persistentVolumeClaim:
-            claimName: wp-pv-claim
+            claimName: wp-sysrant-claim
