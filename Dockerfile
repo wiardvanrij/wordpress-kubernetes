@@ -55,8 +55,8 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/*
 
 # Define volumes, workdirs and prepare wp
-VOLUME /var/www/html/wp-content
-VOLUME /etc/secrets
+VOLUME /var/www/html/wp-content/uploads
+
 WORKDIR /var/www/html/
 
 COPY --from=downloader /tmp/wordpress/ /var/www/html/
