@@ -24,6 +24,19 @@ spec:
     requests:
       storage: 2Gi
 ---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: wordpress
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: wordpress
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -31,13 +44,16 @@ metadata:
   labels:
     app: wordpress
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: wordpress
       tier: frontend
   strategy:
-    type: Recreate
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -49,6 +65,13 @@ spec:
       containers:
         - image: gcr.io/GOOGLE_CLOUD_PROJECT/sysrant:COMMIT_SHA
           name: wordpress
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
           env:
             - name: DB_NAME
               value: wordpress
