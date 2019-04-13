@@ -18,6 +18,7 @@ WORKDIR /tmp/wordpress/
 RUN find ./wp-content/themes/ -maxdepth 1 -mindepth 1 -type d -exec rm -r {} \;; \
     find ./wp-content/plugins/ -maxdepth 1  -mindepth 1 -type d -exec rm -r {} \;; \
     rm wp-config-sample.php; \
+    rm wp-content/plugins/hello.php
     rm readme.html
 
 # Starting the actual container
