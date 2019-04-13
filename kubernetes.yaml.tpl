@@ -45,6 +45,8 @@ spec:
         app: wordpress
         tier: frontend
     spec:
+      securityContext:
+        fsGroup: 33
       containers:
         - image: gcr.io/GOOGLE_CLOUD_PROJECT/sysrant:COMMIT_SHA
           name: wordpress
