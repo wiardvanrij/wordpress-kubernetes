@@ -29,7 +29,7 @@ for index in "${array[@]}" ; do
         declare ${KEY}=$VALUE
     fi
 
-    sed -i -e "s/{$KEY}/$VALUE/g" wp-config.php  
+    sed -i -e 's/{'"$KEY"'}/'"${!KEY}"'/g' wp-config.php  
 
 done
 
