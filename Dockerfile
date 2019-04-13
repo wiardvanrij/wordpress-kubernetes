@@ -54,14 +54,40 @@ RUN set -ex; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*
 
+# Configs
+
+RUN { \
+		echo 'opcache.memory_consumption=128'; \
+		echo 'opcache.interned_strings_buffer=8'; \
+		echo 'opcache.max_accelerated_files=4000'; \
+		echo 'opcache.revalidate_freq=2'; \
+		echo 'opcache.fast_shutdown=1'; \
+		echo 'opcache.enable_cli=1'; \
+	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
+
+RUN { \
+		echo 'error_reporting = 4339'; \
+		echo 'display_errors = Off'; \
+		echo 'display_startup_errors = Off'; \
+		echo 'log_errors = On'; \
+		echo 'error_log = /dev/stderr'; \
+		echo 'log_errors_max_len = 1024'; \
+		echo 'ignore_repeated_errors = On'; \
+		echo 'ignore_repeated_source = Off'; \
+		echo 'html_errors = Off'; \
+	} > /usr/local/etc/php/conf.d/error-logging.ini
+
+RUN a2enmod rewrite expires
+
 # Define volumes, workdirs and prepare wp
 VOLUME /var/www/html/wp-content/uploads
 
 WORKDIR /var/www/html/
 
 COPY --from=downloader /tmp/wordpress/ /var/www/html/
-COPY wp-config.php /var/www/html/
+COPY wp-config.conf wp-config.php
 
+COPY app/.htaccess .htaccess
 COPY app/plugins wp-content/plugins/
 COPY app/themes  wp-content/themes/
 
