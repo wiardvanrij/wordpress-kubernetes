@@ -37,4 +37,8 @@ for index in "${array[@]}" ; do
 
 done
 
+cd /var/www && curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+su - www-data -s /bin/bash -c 'php wp-cli.phar core update-db --path=/var/www/html/'
+rm wp-cli.phar
+
 exec "$@"

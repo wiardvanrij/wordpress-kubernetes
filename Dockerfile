@@ -34,6 +34,7 @@ RUN set -ex; \
 		libjpeg-dev \
 		libpng-dev \
 		libzip-dev \
+        less
 	; \
 	\
 	docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr; \
@@ -54,7 +55,7 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/*
 
 # Define volumes, workdirs and prepare wp
-VOLUME /var/www/wordpress/wp-content
+VOLUME /var/www/html/wp-content
 VOLUME /etc/secrets
 WORKDIR /var/www/html/
 
