@@ -60,8 +60,8 @@ WORKDIR /var/www/html/
 COPY --from=downloader /tmp/wordpress/ /var/www/html/
 COPY wp-config.php /var/www/html/
 
-COPY app/plugins wp-content/
-COPY app/themes  wp-content/
+COPY app/plugins wp-content/plugins/
+COPY app/themes  wp-content/themes/
 
 RUN chown www-data:www-data . -R
 
