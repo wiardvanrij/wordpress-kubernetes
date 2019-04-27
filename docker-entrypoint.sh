@@ -1,6 +1,8 @@
 #!/bin/bash
 
 array=(
+    'WP_CACHE::false'
+    'WPCACHEHOME::'
     'DB_NAME::dbname'
     'DB_USER::dbuser'
     'DB_PASSWORD::dbpass'

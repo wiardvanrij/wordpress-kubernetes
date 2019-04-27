@@ -12,18 +12,6 @@ spec:
     app: wordpress
     tier: frontend
 ---
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: wp-sysrant-claim
-spec:
-  storageClassName: "nfs"
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
----
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -34,8 +22,8 @@ spec:
     kind: Deployment
     name: wordpress
   minReplicas: 2
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 50
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 70
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -66,21 +54,21 @@ spec:
         - image: gcr.io/GOOGLE_CLOUD_PROJECT/sysrant:COMMIT_SHA
           name: wordpress
           resources:
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
             limits:
-              memory: "128Mi"
-              cpu: "500m"
+              memory: "150Mi"
+              cpu: "100m"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/bucket                              
           env:
             - name: DB_NAME
-              value: wordpress
+              value: name
             - name: DB_USER
-              value: root
+              value: user
             - name: DB_HOST
-              value: wordpress-mysql
+              value: 10.0.0.1
             - name: DB_CHARSET
-              value: utf8
+              value: utf8mb4
             - name: DB_COLLATE
               value: ''  
             - name: AUTH_KEY
@@ -128,13 +116,10 @@ spec:
                 secretKeyRef:
                   name: wordpress-secrets
                   key: DB_PASSWORD       
-          ports:
-            - containerPort: 80
-              name: wordpress
-          volumeMounts:
-            - name: wordpress-persistent-storage
-              mountPath: /var/www/html/wp-content/uploads  
       volumes:
-        - name: wordpress-persistent-storage
-          persistentVolumeClaim:
-            claimName: wp-sysrant-claim
+        - name: config-volume
+          configMap:
+            name: bucket
+            items:
+            - key: bucket.json
+              path: keys.json

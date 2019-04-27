@@ -1,0 +1,8 @@
+.idea
+app/cache
+app/upgrade
+app/uploads
+.DS_Store
+.env
+app/wp-cache-config.php
+app/advanced-cache.php
